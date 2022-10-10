@@ -35,7 +35,11 @@ export interface IDetailsListCompactExampleItem {
 export interface IDetailsListCompactExampleState {
   items: IDetailsListCompactExampleItem[];
   selectionDetails: string;
-  updateDetails: string;
+}
+
+type TfunctionPassedArguments = {
+  updateId: number,
+  updateName: string,
 }
 
 export default class Detailslistbasic extends React.Component<{}, IDetailsListCompactExampleState> {
@@ -59,26 +63,25 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
       { key: 'column4', name: 'Invoice Date', fieldName: 'date', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'column5', name: 'Buyer Name', fieldName: 'buyerName', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'column6', name: 'Buyer Email', fieldName: 'buyerEmail', minWidth: 100, maxWidth: 200, isResizable: true },
-      
+
     ];
 
     this.state = {
       items: this._allItems,
       selectionDetails: this._getSelectionDetails(),
-      updateDetails: ''
     };
   }
 
 
   public async componentDidMount() {
-    const list= sp.web.lists.getByTitle("Hello List");
+    const list = sp.web.lists.getByTitle("Hello List");
 
     // const i = await list.items.getById(1).update({
     //   Tittle: "CEO",
     //   FullName: "Pinky"
     // });
-    
-    let items: any[] = await list.items.select('Id','FullName','Status','Tittle','InvoiceDate','Buyer/EMail','Buyer/Title').expand('Buyer')();
+
+    let items: any[] = await list.items.select('Id', 'FullName', 'Status', 'Tittle', 'InvoiceDate', 'Buyer/EMail', 'Buyer/Title').expand('Buyer')();
 
     // const item= sp.web.lists.getByTitle("listname").items.getById(8).select("Customer/Title","Customer/ID","Customer/EMail").expand("Customer").get();
     //   console.log("item: ", item);
@@ -86,10 +89,10 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     console.log(items);
     items.map((ele: any) => {
 
-      let nowdate: Date=new Date(ele.InvoiceDate);
-      let finaldate= (nowdate.getMonth()+1)   +'/' + nowdate.getDate() + '/'+nowdate.getFullYear();
+      let nowdate: Date = new Date(ele.InvoiceDate);
+      let finaldate = (nowdate.getMonth() + 1) + '/' + nowdate.getDate() + '/' + nowdate.getFullYear();
 
-      
+
 
       this._allItems.push({
         key: ele.Id,
@@ -107,14 +110,58 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     })
   }
 
-  public gettingDataFromUpdateListbasic(id: number, newValue: string){
-    // this.setState({
-    //   updateDetails: newValue,
+  public async gettingDataFromUpdateListbasic(args: TfunctionPassedArguments) {
+    console.log('gaurav' + args.updateName + args.updateId);
+
+    const selectionId = (this._selection.getSelection()[0] as IDetailsListCompactExampleItem).key;
+    console.log('ItemIndex' + selectionId)
+
+    let list = sp.web.lists.getByTitle("Hello List");
+
+    const i = await list.items.getById(Number(selectionId)).update({
+      FullName: args.updateName
+    });
+
+
+    this._allItems = [];
+    list = sp.web.lists.getByTitle("Hello List");
+
+    // const i = await list.items.getById(1).update({
+    //   Tittle: "CEO",
+    //   FullName: "Pinky"
     // });
-    console.log('gaurav'+newValue+id);
+
+    let items: any[] = await list.items.select('Id', 'FullName', 'Status', 'Tittle', 'InvoiceDate', 'Buyer/EMail', 'Buyer/Title').expand('Buyer')();
+
+    // const item= sp.web.lists.getByTitle("listname").items.getById(8).select("Customer/Title","Customer/ID","Customer/EMail").expand("Customer").get();
+    //   console.log("item: ", item);
+
+    console.log(items);
+    items.map((ele: any) => {
+
+      let nowdate: Date = new Date(ele.InvoiceDate);
+      let finaldate = (nowdate.getMonth() + 1) + '/' + nowdate.getDate() + '/' + nowdate.getFullYear();
+
+
+
+      this._allItems.push({
+        key: ele.Id,
+        name: ele.FullName,
+        status: ele.Status,
+        title: ele.Tittle,
+        date: finaldate,
+        buyerName: ele.Buyer.Title,
+        buyerEmail: ele.Buyer.EMail,
+      })
+    });
+
+    this.setState({
+      items: this._allItems,
+    })
+
   }
 
-  
+
 
   public render(): JSX.Element {
     const { items, selectionDetails } = this.state;
@@ -157,7 +204,7 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
       case 0:
         return 'No items selected';
       case 1:
-        return '1 item selected: ' + (this._selection.getSelection()[0] as IDetailsListCompactExampleItem).name;
+        return '1 item selected: ' + (this._selection.getSelection()[0] as IDetailsListCompactExampleItem).key;
       default:
         return `${selectionCount} items selected`;
     }
