@@ -9,8 +9,12 @@ const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } 
 const narrowTextFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const stackTokens = { childrenGap: 15 };
 
+type TfunctionPassedArguments={
+    id: number,
+    updateName: string,
+}
 type UpdateListbasicProps={
-    gettingDataFromUpdateListbasic: (newValue: string)=>void
+    gettingDataFromUpdateListbasic: (passedValuesThroughFunction: TfunctionPassedArguments)=>void
 }
 
 const UpdateListbasic: React.FunctionComponent<UpdateListbasicProps> = (props: UpdateListbasicProps) => {
@@ -37,7 +41,7 @@ const UpdateListbasic: React.FunctionComponent<UpdateListbasicProps> = (props: U
     // const i = await list.items.getById(Number(firstTextFieldValue)).update({
     //   FullName: secondTextFieldValue
     // });
-    props.gettingDataFromUpdateListbasic(secondTextFieldValue);
+    props.gettingDataFromUpdateListbasic(5,'saurav');
   }
 
   return (

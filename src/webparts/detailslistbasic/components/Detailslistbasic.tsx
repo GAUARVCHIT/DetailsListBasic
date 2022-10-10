@@ -107,11 +107,11 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     })
   }
 
-  public gettingDataFromUpdateListbasic(newValue: string){
+  public gettingDataFromUpdateListbasic(id: number, newValue: string){
     // this.setState({
     //   updateDetails: newValue,
     // });
-    console.log('gaurav'+newValue);
+    console.log('gaurav'+newValue+id);
   }
 
   
