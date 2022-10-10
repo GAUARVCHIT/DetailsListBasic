@@ -35,6 +35,7 @@ export interface IDetailsListCompactExampleItem {
 export interface IDetailsListCompactExampleState {
   items: IDetailsListCompactExampleItem[];
   selectionDetails: string;
+  updateDetails: string;
 }
 
 export default class Detailslistbasic extends React.Component<{}, IDetailsListCompactExampleState> {
@@ -64,6 +65,7 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     this.state = {
       items: this._allItems,
       selectionDetails: this._getSelectionDetails(),
+      updateDetails: ''
     };
   }
 
@@ -105,6 +107,13 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     })
   }
 
+  public gettingDataFromUpdateListbasic(newValue: string){
+    // this.setState({
+    //   updateDetails: newValue,
+    // });
+    console.log('gaurav'+newValue);
+  }
+
   
 
   public render(): JSX.Element {
@@ -136,7 +145,7 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
             checkButtonAriaLabel="select row"
           />
         </MarqueeSelection>
-        <UpdateListbasic></UpdateListbasic>
+        <UpdateListbasic gettingDataFromUpdateListbasic={this.gettingDataFromUpdateListbasic.bind(this)}></UpdateListbasic>
       </div>
     );
   }

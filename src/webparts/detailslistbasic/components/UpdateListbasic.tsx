@@ -9,7 +9,11 @@ const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } 
 const narrowTextFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const stackTokens = { childrenGap: 15 };
 
-const UpdateListbasic: React.FunctionComponent = () => {
+type UpdateListbasicProps={
+    gettingDataFromUpdateListbasic: (newValue: string)=>void
+}
+
+const UpdateListbasic: React.FunctionComponent<UpdateListbasicProps> = (props: UpdateListbasicProps) => {
   const [firstTextFieldValue, setFirstTextFieldValue] = React.useState('');
   const [secondTextFieldValue, setSecondTextFieldValue] = React.useState('');
   const onChangeFirstTextFieldValue = React.useCallback(
@@ -28,12 +32,12 @@ const UpdateListbasic: React.FunctionComponent = () => {
   );
 
   async function _onClickHandler(){
-    const list= sp.web.lists.getByTitle("Hello List");
+    // const list= sp.web.lists.getByTitle("Hello List");
 
-    const i = await list.items.getById(Number(firstTextFieldValue)).update({
-      FullName: secondTextFieldValue
-    });
-
+    // const i = await list.items.getById(Number(firstTextFieldValue)).update({
+    //   FullName: secondTextFieldValue
+    // });
+    props.gettingDataFromUpdateListbasic(secondTextFieldValue);
   }
 
   return (
