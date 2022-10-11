@@ -9,6 +9,7 @@ import { sp } from '@pnp/sp/presets/all';
 import "@pnp/sp/items";
 import { Stack } from '@fluentui/react/lib/Stack';
 import UpdateListbasic from './UpdateListbasic';
+import InsertListbasic from './InsertListbasic';
 
 
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
@@ -35,6 +36,16 @@ export interface IDetailsListCompactExampleItem {
 export interface IDetailsListCompactExampleState {
   items: IDetailsListCompactExampleItem[];
   selectionDetails: string;
+}
+
+type TInsertFunctionPassedArguments = {
+  invoiceDescription: string,
+  invoiceDate: string,
+  invoiceAmount: string,
+  employeeName: string,
+  status: string,
+  tittle: string,
+  fullName: string,
 }
 
 type TfunctionPassedArguments = {
@@ -110,11 +121,33 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     })
   }
 
+  public async gettingDataFromInsertListbasic(args: TInsertFunctionPassedArguments) {
+    console.log('invoiceDescription :' + args.invoiceDescription);
+    console.log('invoiceDate :' + args.invoiceDate);
+    console.log('invoiceAmount :' + args.invoiceAmount);
+    console.log('employeeName :' + args.employeeName);
+    console.log('status :' + args.status);
+    console.log('tittle :' + args.tittle);
+    console.log('fullName :' + args.fullName);
+
+    let list = sp.web.lists.getByTitle("Hello List");
+
+    await list.items.add({
+      Title: args.invoiceDescription,
+      InvoiceDate: args.invoiceDate,
+      InvoiceAmount: Number(args.invoiceAmount),
+      VendorName: args.employeeName,
+      Status: args.status,
+      Tittle: args.tittle,
+      FullName: args.fullName,
+    })
+  }
+
   public async gettingDataFromUpdateListbasic(args: TfunctionPassedArguments) {
-    console.log('gaurav' + args.updateName + args.updateId);
+    // console.log('gaurav' + args.updateName + args.updateId);
 
     const selectionId = (this._selection.getSelection()[0] as IDetailsListCompactExampleItem).key;
-    console.log('ItemIndex' + selectionId)
+    // console.log('ItemIndex' + selectionId)
 
     let list = sp.web.lists.getByTitle("Hello List");
 
@@ -130,13 +163,15 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
     //   Tittle: "CEO",
     //   FullName: "Pinky"
     // });
+    console.log('gaurav');
+    console.log(list.items());
 
     let items: any[] = await list.items.select('Id', 'FullName', 'Status', 'Tittle', 'InvoiceDate', 'Buyer/EMail', 'Buyer/Title').expand('Buyer')();
 
     // const item= sp.web.lists.getByTitle("listname").items.getById(8).select("Customer/Title","Customer/ID","Customer/EMail").expand("Customer").get();
     //   console.log("item: ", item);
 
-    console.log(items);
+    // console.log(items);
     items.map((ele: any) => {
 
       let nowdate: Date = new Date(ele.InvoiceDate);
@@ -193,6 +228,7 @@ export default class Detailslistbasic extends React.Component<{}, IDetailsListCo
           />
         </MarqueeSelection>
         <UpdateListbasic gettingDataFromUpdateListbasic={this.gettingDataFromUpdateListbasic.bind(this)}></UpdateListbasic>
+        <InsertListbasic gettingDataFromInsertListbasic={this.gettingDataFromInsertListbasic.bind(this)}></InsertListbasic>
       </div>
     );
   }
